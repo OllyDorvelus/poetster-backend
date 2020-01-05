@@ -30,6 +30,8 @@ class Base(Configuration):
 
         'rest_framework',
         'django_extensions',
+
+        'account',
     ]
 
     MIDDLEWARE = [
@@ -122,7 +124,7 @@ class Base(Configuration):
     STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
     STATIC_URL = '/static/'
 
-   # AUTH_USER_MODEL = 'account.User'
+    AUTH_USER_MODEL = 'account.User'
 
 
 class Dev(Base):
