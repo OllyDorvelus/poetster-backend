@@ -1,11 +1,18 @@
 import uuid
+import os
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
-
 from django.conf import settings
-# Create your models here.
+
+
+def profile_image_file_path(instance, filename):
+    """Generate the file path for uploading image to a poem"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/profile/', filename)
 
 
 class AbstractModel(models.Model):
@@ -55,4 +62,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(AbstractModel):
-    pass
+    """Extending user module for more information about the user
+        Don't want to modify the given django user model too much"""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    follows = models.ManyToManyField('self', related_name='follow_by', symmetrical=False)
+    bio = models.TextField(blank=True)
+    instagram = models.URLField(blank=True)
+    image = models.ImageField(null=True, upload_to=profile_image_file_path)
+
