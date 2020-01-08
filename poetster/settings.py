@@ -32,6 +32,7 @@ class Base(Configuration):
         'django_extensions',
 
         'account',
+        'poem',
     ]
 
     MIDDLEWARE = [
