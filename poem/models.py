@@ -4,7 +4,7 @@ import os
 from django.db import models
 from django.conf import settings
 
-from account.models import AbstractModel
+from user.models import AbstractModel
 
 
 def poem_image_file_path(instance, filename):
