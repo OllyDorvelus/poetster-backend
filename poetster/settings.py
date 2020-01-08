@@ -125,6 +125,9 @@ class Base(Configuration):
     STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
     STATIC_URL = '/static/'
 
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = '/vol/web/media'
+
     AUTH_USER_MODEL = 'account.User'
 
 
