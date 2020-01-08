@@ -29,9 +29,11 @@ class Base(Configuration):
         'django.contrib.staticfiles',
 
         'rest_framework',
+        'rest_framework.authtoken',
+
         'django_extensions',
 
-        'account',
+        'user',
         'poem',
     ]
 
@@ -98,13 +100,13 @@ class Base(Configuration):
 
     # REST FRAMEWORK CONFIGURATION
 
-    REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-            'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.BasicAuthentication',
-        ),
-    }
+    # REST_FRAMEWORK = {
+    #     'DEFAULT_AUTHENTICATION_CLASSES': (
+    #         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    #         'rest_framework.authentication.SessionAuthentication',
+    #         'rest_framework.authentication.BasicAuthentication',
+    #     ),
+    # }
 
     # Internationalization
     # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -128,7 +130,7 @@ class Base(Configuration):
     MEDIA_URL = '/media/'
     MEDIA_ROOT = '/vol/web/media'
 
-    AUTH_USER_MODEL = 'account.User'
+    AUTH_USER_MODEL = 'user.User'
 
 
 class Dev(Base):
