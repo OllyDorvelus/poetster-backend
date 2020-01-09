@@ -15,6 +15,13 @@ def poem_image_file_path(instance, filename):
     return os.path.join('uploads/poem/', filename)
 
 
+class PoemManager(models.Manager):
+    """Managing poem objects"""
+    def is_published(self):
+        """Return only published poems"""
+        return super().get_queryset().filter(is_published=True)
+
+
 class Poem(AbstractModel):
     """Poem that can be submitted by any auth user"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -23,16 +30,36 @@ class Poem(AbstractModel):
     title = models.CharField(max_length=75, blank=False)
     summary = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=False, null=False)
-
+    is_published = models.BooleanField(default=True)
     image = models.ImageField(null=True, upload_to=poem_image_file_path)
+
+    objects = PoemManager()
+
+
+class CategoryManager(models.Manager):
+    """Managing category objects"""
+    def active(self):
+        return super().get_queryset().filter(disabled=False)
 
 
 class Category(AbstractModel):
     """Categories to describe poem"""
     name = models.CharField(max_length=75)
+    disabled = models.BooleanField(default=False)
+
+    objects = CategoryManager()
+
+
+class GenreManager(models.Manager):
+    """Managing genre objects"""
+
+    def active(self):
+        return super().get_queryset().filter(disabled=False)
 
 
 class Genre(AbstractModel):
     """Genre to describe poem"""
     name = models.CharField(max_length=75)
+    disabled = models.BooleanField(default=False)
 
+    objects = GenreManager()
