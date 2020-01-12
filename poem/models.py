@@ -35,6 +35,9 @@ class Poem(AbstractModel):
 
     objects = PoemManager()
 
+    def __str__(self):
+        return f'{self.user} - {self.title}'
+
 
 class CategoryManager(models.Manager):
     """Managing category objects"""
@@ -48,6 +51,9 @@ class Category(AbstractModel):
     disabled = models.BooleanField(default=False)
 
     objects = CategoryManager()
+
+    def __str__(self):
+        return self.name
 
 
 class GenreManager(models.Manager):
@@ -63,3 +69,6 @@ class Genre(AbstractModel):
     disabled = models.BooleanField(default=False)
 
     objects = GenreManager()
+
+    def __str__(self):
+        return self.name

@@ -5,18 +5,27 @@ from poem.models import Poem, Genre, Category
 
 
 class PoemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'user']
+    list_filter = ['user']
+
     class Meta:
-        fields = ['title', 'genre', 'user']
+        model = Poem
 
 
 class GenreAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'disabled']
+    list_filter = ['name']
+
     class Meta:
-        fields = ['name', 'disabled']
+        model = Genre
 
 
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'disabled']
+    list_filter = ['name']
+
     class Meta:
-        fields = ['name', 'disabled']
+        model = Category
 
 
 admin.site.register(Poem, PoemAdmin)
