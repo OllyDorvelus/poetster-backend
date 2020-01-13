@@ -12,6 +12,7 @@ router.register('categories', views.CategoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('poems', views.CreatePoemView.as_view(), name='poem-list')
+    path('poems', views.CreatePoemView.as_view(), name='poem-list'),
+    path('poems/<pk>', views.PoemDetailView.as_view(), name='poem-detail')
 ]
 

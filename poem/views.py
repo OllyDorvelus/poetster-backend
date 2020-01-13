@@ -5,9 +5,9 @@ from rest_framework import generics
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from user.permissions import AdminWrite
+from user.permissions import AdminWrite, OwnerPermission
 
-from poem.serializers import GenreSerializer, CategorySerializer, PoemCreateSerializer
+from poem.serializers import GenreSerializer, CategorySerializer, PoemCreateSerializer, PoemSerializer
 from poem.models import Genre, Category, Poem
 from poem.filters import PoemFilter
 
@@ -42,9 +42,12 @@ class CreatePoemView(generics.ListCreateAPIView):
     queryset = Poem.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = PoemFilter
-    
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
+class PoemDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PoemSerializer
+    queryset = Poem.objects.all()
+    permission_classes = [OwnerPermission]
