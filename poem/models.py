@@ -31,7 +31,7 @@ class Poem(AbstractModel):
     summary = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=False, null=False)
     is_published = models.BooleanField(default=True)
-    image = models.ImageField(null=True, upload_to=poem_image_file_path)
+    image = models.ImageField(null=True, blank=True, upload_to=poem_image_file_path)
 
     objects = PoemManager()
 
