@@ -32,6 +32,7 @@ class Base(Configuration):
         'rest_framework.authtoken',
 
         'django_extensions',
+        'django_filters',
 
         'user',
         'poem',
@@ -100,13 +101,13 @@ class Base(Configuration):
 
     # REST FRAMEWORK CONFIGURATION
 
-    # REST_FRAMEWORK = {
-    #     'DEFAULT_AUTHENTICATION_CLASSES': (
-    #         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    #         'rest_framework.authentication.SessionAuthentication',
-    #         'rest_framework.authentication.BasicAuthentication',
-    #     ),
-    # }
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.BasicAuthentication',
+        ),
+        'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    }
 
     # Internationalization
     # https://docs.djangoproject.com/en/2.2/topics/i18n/

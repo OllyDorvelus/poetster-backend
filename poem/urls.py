@@ -11,6 +11,7 @@ router.register('genres', views.GenreViewSet)
 router.register('categories', views.CategoryViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('poems', views.CreatePoemView.as_view(), name='poem-list')
 ]
 
