@@ -16,9 +16,9 @@ class OwnerPermission(permissions.BasePermission):
     """Allow users write to their own resources only"""
 
     def has_object_permission(self, request, view, obj):
-        """Check the user is trying to update thier own status"""
+        """Check the user is trying to update their own resource"""
 
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return obj.user == request.user.id
+        return obj.user.id == request.user.id
