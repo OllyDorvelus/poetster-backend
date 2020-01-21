@@ -11,7 +11,7 @@ from user.permissions import AdminWrite, OwnerPermission
 
 from poem.serializers import GenreSerializer, CategorySerializer, PoemCreateSerializer, PoemSerializer
 from poem.models import Genre, Category, Poem
-from poem.filters import PoemFilter
+from poem.filters import PoemFilter, GenreFilter, CategoryFilter
 
 from poem.pagination import StandardResultsSetPagination
 
@@ -21,10 +21,14 @@ class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     permission_classes = (AdminWrite,)
     queryset = Genre.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    ordering_fields = ['name']
+    search_fields = ['name']
+    filterset_class = GenreFilter
 
     def list(self, request, *args, **kwargs):
         """Retrieve only enabled genres"""
-        self.queryset = Genre.objects.active()
+        self.queryset = Genre.objects.active().order_by('name')
         return super().list(request, *args, **kwargs)
 
 
@@ -33,10 +37,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (AdminWrite,)
     queryset = Category.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    ordering_fields = ['name']
+    search_fields = ['name']
+    filterset_class = CategoryFilter
 
     def list(self, request, *args, **kwargs):
         """Retrieve only enabled categories"""
-        self.queryset = Category.objects.active()
+        self.queryset = Category.objects.active().order_by('name')
         return super().list(request, *args, **kwargs)
 
 
@@ -48,7 +56,7 @@ class CreatePoemView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Poem.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    ordering_fields = ['title']
+    ordering_fields = ['title', 'created']
     search_fields = ['title', 'user__name']
     filterset_class = PoemFilter
     pagination_class = StandardResultsSetPagination
