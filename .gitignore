@@ -62,3 +62,6 @@ target/
 *.pyc
 __pycache__/
 local_settings.py
+poem/migrations
+user/migrations
+.idea/

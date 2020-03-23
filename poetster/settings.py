@@ -5,6 +5,7 @@ Using django-configurations for settings
 """
 
 import os
+from datetime import timedelta
 
 from configurations import Configuration
 
@@ -103,7 +104,8 @@ class Base(Configuration):
 
     REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        #    'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.BasicAuthentication',
         ),
         'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
@@ -142,6 +144,11 @@ class Dev(Base):
         'localhost',
         '127.0.0.1:8000',
     ]
+
+    SIMPLE_JWT = {
+        'ACCESS_TOKEN_LIFETIME': timedelta(days=60),
+        'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
+    }
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

@@ -6,13 +6,25 @@ from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
+    password2 = serializers.CharField(min_length=8, trim_whitespace=False, style={'input_type': 'password'}, write_only=True)
     class Meta:
         model = get_user_model()
-        fields = ('email', 'password', 'name')
-        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 8, 'style': {'input_type': 'password'}}}
+        fields = ('email', 'first_name', 'last_name', 'password', 'password2')
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+
+        if password != password2:
+            msg = {'password2': ['Passwords must match.']}
+            raise serializers.ValidationError(msg)
+
+        return attrs
 
     def create(self, validated_data):
         """"Create a new user with encrypted password and return it"""
+        del validated_data['password2']
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
@@ -25,7 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
-
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user authentication objects"""

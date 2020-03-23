@@ -7,12 +7,11 @@ from poem import views
 app_name = 'poem'
 
 router = DefaultRouter()
+router.register('poems', views.PoemViewSet)
 router.register('genres', views.GenreViewSet)
 router.register('categories', views.CategoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('poems', views.CreatePoemView.as_view(), name='poem-list'),
-    path('poems/<pk>', views.PoemDetailView.as_view(), name='poem-detail')
 ]
 

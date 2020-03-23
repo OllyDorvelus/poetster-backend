@@ -47,7 +47,7 @@ class CategoryManager(models.Manager):
 
 class Category(AbstractModel):
     """Categories to describe poem"""
-    name = models.CharField(max_length=75)
+    name = models.CharField(max_length=75, unique=True)
     disabled = models.BooleanField(default=False)
 
     objects = CategoryManager()
@@ -65,7 +65,7 @@ class GenreManager(models.Manager):
 
 class Genre(AbstractModel):
     """Genre to describe poem"""
-    name = models.CharField(max_length=75)
+    name = models.CharField(max_length=75, unique=True)
     disabled = models.BooleanField(default=False)
 
     objects = GenreManager()

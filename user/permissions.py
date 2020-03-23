@@ -1,14 +1,10 @@
 from rest_framework import permissions
 
 
-class AdminWrite(permissions.BasePermission):
-    """Only admin can change resource, others will be able to view"""
-
-    def has_object_permission(self, request, view, obj):
-        """"Check user is trying to edit their own profile"""
+class IsAdminOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-
         return request.user.is_superuser
 
 

@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import permissions
 from rest_framework import generics
 
@@ -7,9 +6,9 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-from user.permissions import AdminWrite, OwnerPermission
+from user.permissions import OwnerPermission, IsAdminOrReadOnly
 
-from poem.serializers import GenreSerializer, CategorySerializer, PoemCreateSerializer, PoemSerializer
+from poem.serializers import GenreSerializer, CategorySerializer, PoemSerializer
 from poem.models import Genre, Category, Poem
 from poem.filters import PoemFilter, GenreFilter, CategoryFilter
 
@@ -19,7 +18,7 @@ from poem.pagination import StandardResultsSetPagination
 class GenreViewSet(viewsets.ModelViewSet):
     """Handle creating, updating, deleting genres, admin only"""
     serializer_class = GenreSerializer
-    permission_classes = (AdminWrite,)
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Genre.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = ['name']
@@ -35,7 +34,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     """Handle creating, updating, deleting categories, admin only"""
     serializer_class = CategorySerializer
-    permission_classes = (AdminWrite,)
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Category.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = ['name']
@@ -48,12 +47,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
-class CreatePoemView(generics.ListCreateAPIView):
+class PoemViewSet(viewsets.ModelViewSet):
     """Handle creation of poems and listing of poems
     POST [title, summary, content, is_published, categories]
     """
-    serializer_class = PoemCreateSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = PoemSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, OwnerPermission]
     queryset = Poem.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = ['title', 'created']
@@ -61,11 +60,7 @@ class CreatePoemView(generics.ListCreateAPIView):
     filterset_class = PoemFilter
     pagination_class = StandardResultsSetPagination
 
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
-class PoemDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = PoemSerializer
-    queryset = Poem.objects.all()
-    permission_classes = [OwnerPermission]

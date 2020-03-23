@@ -17,18 +17,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'disabled')
 
 
-class PoemCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating a poem"""
-    genre = serializers.StringRelatedField()
-
-    class Meta:
-        model = Poem
-        fields = ('id', 'title', 'summary', 'content', 'is_published', 'genre', 'categories')
-
-
 class PoemSerializer(serializers.ModelSerializer):
     """Serializer for creating a poem"""
-    genre = serializers.StringRelatedField()
 
     class Meta:
         model = Poem
