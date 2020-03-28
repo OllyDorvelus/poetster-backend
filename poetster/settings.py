@@ -34,6 +34,7 @@ class Base(Configuration):
 
         'django_extensions',
         'django_filters',
+        'storages', # django-storages
 
         'user',
         'poem',
@@ -70,17 +71,6 @@ class Base(Configuration):
 
     # APPNAME.WSGI.APPLICATION
     WSGI_APPLICATION = 'poetster.wsgi.application'
-
-    # Database
-    # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-
 
     # Password validation
     # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -127,8 +117,8 @@ class Base(Configuration):
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.2/howto/static-files/
-    STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
-    STATIC_URL = '/static/'
+   # STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
+   # STATIC_URL = '/static/'
 
     MEDIA_URL = '/media/'
     MEDIA_ROOT = '/vol/web/media'
@@ -156,15 +146,53 @@ class Dev(Base):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('P_RDS_DB_NAME', ''),
+            'USER': os.getenv('P_RDS_USERNAME', ''),
+            'PASSWORD': os.getenv('P_RDS_PASSWORD', ''),
+            'HOST': os.getenv('P_RDS_HOSTNAME', ''),
+            'PORT': os.getenv('P_RDS_PORT', ''),
         }
     }
+
+    # AWS SETTINGS
+    AWS_LOCATION = 'static'
+    AWS_ACCESS_KEY_ID =  os.getenv('OL_AWS_ACCESS_KEY')
+    AWS_SECRET_ACCESS_KEY = os.getenv('OL_AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('P_BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+
+    DEFAULT_FILE_STORAGE = 'poetster.storage_backends.MediaStorage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static'),
+    ]
+
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+    ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+    STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    )
+
+    AWS_DEFAULT_ACL = None
 
 
 class Prod(Base):
     DEBUG = False
 
     DATABASES = {
-        # Production database settings (postgres recommended)
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('RDS_DB_NAME', ''),
+            'USER': os.getenv('RDS_USERNAME', ''),
+            'PASSWORD': os.getenv('RDS_PASSWORD', ''),
+            'HOST': os.getenv('RDS_HOSTNAME', ''),
+            'PORT': os.getenv('RDS_PORT', ''),
+        }
     }
