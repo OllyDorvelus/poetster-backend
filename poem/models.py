@@ -29,7 +29,7 @@ class Poem(AbstractModel):
     categories = models.ManyToManyField('Category', related_name='poems')
     title = models.CharField(max_length=75, blank=False)
     summary = models.CharField(max_length=255, blank=True)
-    content = models.TextField(blank=False, null=False)
+    content = models.TextField(blank=False)
     is_published = models.BooleanField(default=True)
     image = models.ImageField(null=True, blank=True, upload_to=poem_image_file_path)
 

@@ -7,10 +7,10 @@ from user import models
 
 class UserAdmin(BaseUserAdmin):
     ordering = ['id']
-    list_display = ['email', 'first_name', 'last_name']
+    list_display = ['email', 'first_name', 'last_name', 'pen_name']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('first_name', 'last_name',)}),
+        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'pen_name')}),
         (
             _('Permissions'),
             {
@@ -31,5 +31,13 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'bio', 'instagram']
+
+    class Meta:
+        model = models.Profile
+
+
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Profile, ProfileAdmin)

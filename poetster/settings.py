@@ -9,6 +9,7 @@ from datetime import timedelta
 
 from configurations import Configuration
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class Base(Configuration):
     """
@@ -16,7 +17,6 @@ class Base(Configuration):
     """
 
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'ss^%$-fake-secret-key')
@@ -140,7 +140,6 @@ class Dev(Base):
         'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
     }
 
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     CORS_ORIGIN_ALLOW_ALL = True
 
@@ -196,3 +195,30 @@ class Prod(Base):
             'PORT': os.getenv('RDS_PORT', ''),
         }
     }
+
+    # AWS SETTINGS
+    AWS_LOCATION = 'static'
+    AWS_ACCESS_KEY_ID =  os.getenv('AWS_ACCESS_KEY')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+
+    DEFAULT_FILE_STORAGE = 'poetster.storage_backends.MediaStorage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static'),
+    ]
+
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+    ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+    STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    )
+
+    AWS_DEFAULT_ACL = None

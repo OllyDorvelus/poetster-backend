@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 def profile_image_file_path(instance, filename):
@@ -52,8 +54,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
     email = models.EmailField(max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
+    pen_name = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -61,12 +64,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-    @property
-    def get_full_name(self):
-        return self.first_name + " " + self.last_name
-
     def __str__(self):
-        return self.get_full_name
+        return self.pen_name
 
 
 class Profile(AbstractModel):
@@ -78,3 +77,12 @@ class Profile(AbstractModel):
     instagram = models.URLField(blank=True)
     image = models.ImageField(null=True, upload_to=profile_image_file_path)
 
+    def __str__(self):
+        return self.user.pen_name
+
+# Signals
+@receiver(post_save, sender=User)
+def add_profile_when_user_created(sender, instance, created, **kwargs):
+    if created:
+        new_profile = Profile.objects.create(user=instance)
+        new_profile.save()
