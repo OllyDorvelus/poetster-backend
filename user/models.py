@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from poetster.validators import validate_image_file_size
 
 def profile_image_file_path(instance, filename):
     """Generate the file path for uploading image to a poem"""
@@ -75,7 +76,7 @@ class Profile(AbstractModel):
     follows = models.ManyToManyField('self', related_name='follow_by', symmetrical=False)
     bio = models.TextField(blank=True)
     instagram = models.URLField(blank=True)
-    image = models.ImageField(null=True, upload_to=profile_image_file_path)
+    image = models.ImageField(blank=True, validators=[validate_image_file_size], upload_to=profile_image_file_path)
 
     def __str__(self):
         return self.user.pen_name

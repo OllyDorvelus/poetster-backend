@@ -5,6 +5,7 @@ from django.db import models
 from django.conf import settings
 
 from user.models import AbstractModel
+from poetster.validators import validate_image_file_size
 
 
 def poem_image_file_path(instance, filename):
@@ -31,7 +32,7 @@ class Poem(AbstractModel):
     summary = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=False)
     is_published = models.BooleanField(default=True)
-    image = models.ImageField(null=True, blank=True, upload_to=poem_image_file_path)
+    image = models.ImageField(null=True, blank=True,validators=[validate_image_file_size], upload_to=poem_image_file_path)
 
     objects = PoemManager()
 
