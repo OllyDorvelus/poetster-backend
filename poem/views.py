@@ -1,14 +1,13 @@
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework import generics
-
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
+from django_filters.rest_framework import DjangoFilterBackend
 
 from user.permissions import OwnerPermission, IsAdminOrReadOnly
 
-from poem.serializers import GenreSerializer, CategorySerializer, PoemSerializer
+from poem.serializers import GenreSerializer, CategorySerializer, PoemSerializer, PoemImageSerializer
 from poem.models import Genre, Category, Poem
 from poem.filters import PoemFilter, GenreFilter, CategoryFilter
 
@@ -61,6 +60,30 @@ class PoemViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
 
+    def get_serializer_class(self):
+        if self.action == 'upload_image':
+            self.serializer_class = PoemImageSerializer
+        return self.serializer_class
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(methods=['POST'], detail=True, url_path='upload-image')
+    def upload_image(self, request, pk=None):
+        """Upload image for a poem"""
+        poem = self.get_object()
+        serializer = self.get_serializer(
+            poem,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )

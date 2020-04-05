@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from poem.models import Poem, Genre, Category
 
-
 class GenreSerializer(serializers.ModelSerializer):
     """Serializer for genre - all methods"""
     class Meta:
@@ -23,4 +22,14 @@ class PoemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poem
         fields = ('id', 'title', 'summary', 'content', 'is_published', 'genre', 'categories')
+
+
+class PoemImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading image to poem"""
+
+    class Meta:
+        model = Poem
+        fields = ('id', 'image')
+        read_only_fields = ('id',)
+
 
