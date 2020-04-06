@@ -159,10 +159,20 @@ class Dev(Base):
     AWS_ACCESS_KEY_ID =  os.getenv('OL_AWS_ACCESS_KEY')
     AWS_SECRET_ACCESS_KEY = os.getenv('OL_AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('P_BUCKET_NAME')
-    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
+
+    # CELERY
+    CELERY_BROKER_URL = os.getenv('BROKER_URL', 'amqp://guest:guest@localhost:5672//')#'amqp://neuijqgb:z66B8rYpn8oDv1rDO7lMcy71oMnYCLsD@shrimp.rmq.cloudamqp.com/neuijqgb'
+    CELERY_BROKER_POOL_LIMIT = 1  # Will decrease connection usage
+    CELERY_BROKER_HEARTBEAT = None  # We're using TCP keep-alive instead
+    CELERY_BROKER_CONNECTION_TIMEOUT = broker_connection_timeout = 30  # May require a long timeout due to Linux DNS timeouts etc
+    CELERY_RESULT_BACKEND = None  # AMQP is not recommended as result backend as it creates thousands of queues
+    CELERY_EVENT_QUEUE_EXPIRES = 60   # Will delete all celeryev. queues without consumers after 1 minute.
+    CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # Disable prefetching, it's causes problems and doesn't help performance
+    CELERY_WORKER_CONCURRENCY = 50
 
     DEFAULT_FILE_STORAGE = 'poetster.storage_backends.MediaStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -171,7 +181,7 @@ class Dev(Base):
         os.path.join(BASE_DIR, 'static'),
     ]
 
-    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
     ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
@@ -201,7 +211,7 @@ class Prod(Base):
     AWS_ACCESS_KEY_ID =  os.getenv('AWS_ACCESS_KEY')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKET_NAME')
-    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
@@ -213,7 +223,7 @@ class Prod(Base):
         os.path.join(BASE_DIR, 'static'),
     ]
 
-    STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
     ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
