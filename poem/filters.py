@@ -1,13 +1,16 @@
+from django.contrib.auth import get_user_model
+
 import django_filters
 
 from poem.models import Poem, Genre, Category
 
+User = get_user_model()
 
 class PoemFilter(django_filters.FilterSet):
     """Custom filter set for poem model"""
-    user = django_filters.CharFilter(field_name='user__name', lookup_expr='iexact')
-    genre = django_filters.CharFilter(field_name='genre__name', lookup_expr='iexact')
-    category = django_filters.CharFilter(field_name='categories__name', lookup_expr='iexact')
+    user = django_filters.ModelChoiceFilter(field_name='user__pen_name', to_field_name='pen_name', queryset=User.objects.all())
+    genre = django_filters.ModelMultipleChoiceFilter(field_name='genre__name', to_field_name='name', queryset=Genre.objects.active())
+    category = django_filters.ModelMultipleChoiceFilter(field_name='categories__name', to_field_name='name', queryset=Category.objects.active())
 
     class Meta:
         model = Poem
@@ -30,4 +33,3 @@ class CategoryFilter(django_filters.FilterSet):
     class Meta:
         model = Category
         fields = ['name']
-
