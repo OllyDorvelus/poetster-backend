@@ -43,7 +43,6 @@ class PoemSerializer(serializers.ModelSerializer):
                   'is_published',
                   'genre',
                   'categories',
-                  'poem_count',
                   'timesince',
                   'created')
 
