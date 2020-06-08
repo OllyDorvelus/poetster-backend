@@ -1,12 +1,14 @@
 import uuid
 import os
 
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 
 from poetster.validators import validate_image_file_size
 
@@ -69,17 +71,39 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.pen_name
 
 
+class ProfileManager(models.Manager):
+
+    def follow_toggle(self, profile_following, profile_to_follow):
+        """Logic for follow toggle"""
+        if profile_following in profile_to_follow.subscribers.all():
+            is_followed = False
+            profile_to_follow.subscribers.remove(profile_following)
+        else:
+            is_followed = True
+            profile_to_follow.subscribers.add(profile_following)
+        return is_followed
+
 class Profile(AbstractModel):
     """Extending user module for more information about the user
         Don't want to modify the given django user model too much"""
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    follows = models.ManyToManyField('self', related_name='follow_by', symmetrical=False)
+    subscribers = models.ManyToManyField('self', related_name='subscribed', symmetrical=False, blank=True)
     bio = models.TextField(blank=True)
     instagram = models.URLField(blank=True)
     image = models.ImageField(blank=True, validators=[validate_image_file_size], upload_to=profile_image_file_path)
+    objects = ProfileManager()
 
     def __str__(self):
         return self.user.pen_name
+
+    @property
+    def total_subscribers(self):
+        return self.subscribers.all().count()
+
+    @property
+    def total_subscribed(self):
+        return Profile.objects.filter(subscribers=self).count()
+
 
 # Signals
 @receiver(post_save, sender=User)
