@@ -164,8 +164,7 @@ class Dev(Base):
         'CacheControl': 'max-age=86400',
     }
 
-    # CELERY
-    CELERY_BROKER_URL = os.getenv('BROKER_URL', 'amqp://guest:guest@localhost:5672//')#'amqp://neuijqgb:z66B8rYpn8oDv1rDO7lMcy71oMnYCLsD@shrimp.rmq.cloudamqp.com/neuijqgb'
+    CELERY_BROKER_URL = os.getenv('BROKER_URL', '')
     CELERY_BROKER_POOL_LIMIT = 1  # Will decrease connection usage
     CELERY_BROKER_HEARTBEAT = None  # We're using TCP keep-alive instead
     CELERY_BROKER_CONNECTION_TIMEOUT = broker_connection_timeout = 30  # May require a long timeout due to Linux DNS timeouts etc
@@ -189,7 +188,7 @@ class Dev(Base):
     'django.contrib.staticfiles.finders.FileSystemFinder', 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     )
 
-    AWS_DEFAULT_ACL = 'public-read'
+    AWS_DEFAULT_ACL = 'public-read-write'
 
 
 class Prod(Base):
