@@ -13,6 +13,7 @@ urlpatterns = [
     path('create/', views.CreateUserView.as_view(), name='create'),
     path('token/', TokenObtainPairView.as_view(), name='token'),
     path('token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
-    path('me/', views.ManagaeUserView.as_view(), name='me')
+    path('me/', views.ManagaeUserView.as_view(), name='me'),
+    path('subscribe/<pk>/', views.SubscribeUserToggleView.as_view(), name='subscribe')
 ]
 
