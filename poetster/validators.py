@@ -5,7 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 def validate_image_file_size(file):
     """Prevents image files too large from being uploaded."""
     file_size = file.size
-    print(file_size)
     max_file_image_size = 5242880 # A little over 5 MB
 
     if file_size > max_file_image_size:
