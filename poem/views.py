@@ -15,8 +15,7 @@ from poem.models import Genre, Category, Poem
 from poem.filters import PoemFilter, GenreFilter, CategoryFilter
 
 from poem.pagination import StandardResultsSetPagination
-from poem.tasks import add
-from poem.tasks import process_image_file
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     """Handle creating, updating, deleting genres, admin only"""
@@ -30,7 +29,6 @@ class GenreViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """Retrieve only enabled genres"""
-        add.delay(2,3)
         self.queryset = Genre.objects.active().order_by('name')
         return super().list(request, *args, **kwargs)
 
@@ -73,27 +71,25 @@ class PoemViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(methods=['POST'], detail=True, url_path='upload-image')
-    def upload_image(self, request, pk=None):
-        """Upload image for a poem"""
-        poem = self.get_object()
-        serializer = self.get_serializer(
-            poem,
-            data=request.data
-        )
-
-        if serializer.is_valid():
-            instance = serializer.save()
-            instance_id = instance.id
-            process_image_file.delay(instance_id, (50,50))
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-            )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # @action(methods=['POST'], detail=True, url_path='upload-image')
+    # def upload_image(self, request, pk=None):
+    #     """Upload image for a poem"""
+    #     poem = self.get_object()
+    #     serializer = self.get_serializer(
+    #         poem,
+    #         data=request.data
+    #     )
+    #
+    #     if serializer.is_valid():
+    #         instance = serializer.save()
+    #         return Response(
+    #             serializer.data,
+    #             status=status.HTTP_200_OK
+    #         )
+    #     return Response(
+    #         serializer.errors,
+    #         status=status.HTTP_400_BAD_REQUEST
+    #     )
 
     @action(methods=['GET'], detail=True, url_path='up-vote')
     def up_vote(self, request, pk=None):
