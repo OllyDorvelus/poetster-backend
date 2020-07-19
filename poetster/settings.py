@@ -140,17 +140,16 @@ class Dev(Base):
         'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
     }
 
-
     CORS_ORIGIN_ALLOW_ALL = True
 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('P_RDS_DB_NAME', ''),
-            'USER': os.getenv('P_RDS_USERNAME', ''),
-            'PASSWORD': os.getenv('P_RDS_PASSWORD', ''),
-            'HOST': os.getenv('P_RDS_HOSTNAME', ''),
-            'PORT': os.getenv('P_RDS_PORT', ''),
+            'NAME':  os.getenv('P_DB_NAME', 'cubdblta'),
+            'USER': os.getenv('P_DB_USER', 'cubdblta'),
+            'PASSWORD': os.getenv('P_DB_PASSWORD', ''),
+            'HOST': os.getenv('P_DB_HOST', ''),
+            'PORT': 5432,
         }
     }
 
@@ -164,14 +163,14 @@ class Dev(Base):
         'CacheControl': 'max-age=86400',
     }
 
-    CELERY_BROKER_URL = os.getenv('BROKER_URL', '')
-    CELERY_BROKER_POOL_LIMIT = 1  # Will decrease connection usage
-    CELERY_BROKER_HEARTBEAT = None  # We're using TCP keep-alive instead
-    CELERY_BROKER_CONNECTION_TIMEOUT = broker_connection_timeout = 30  # May require a long timeout due to Linux DNS timeouts etc
-    CELERY_RESULT_BACKEND = None  # AMQP is not recommended as result backend as it creates thousands of queues
-    CELERY_EVENT_QUEUE_EXPIRES = 60   # Will delete all celeryev. queues without consumers after 1 minute.
-    CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # Disable prefetching, it's causes problems and doesn't help performance
-    CELERY_WORKER_CONCURRENCY = 50
+    # CELERY_BROKER_URL = os.getenv('BROKER_URL', '')
+    # CELERY_BROKER_POOL_LIMIT = 1  # Will decrease connection usage
+    # CELERY_BROKER_HEARTBEAT = None  # We're using TCP keep-alive instead
+    # CELERY_BROKER_CONNECTION_TIMEOUT = broker_connection_timeout = 30  # May require a long timeout due to Linux DNS timeouts etc
+    # CELERY_RESULT_BACKEND = None  # AMQP is not recommended as result backend as it creates thousands of queues
+    # CELERY_EVENT_QUEUE_EXPIRES = 60   # Will delete all celeryev. queues without consumers after 1 minute.
+    # CELERY_WORKER_PREFETCH_MULTIPLIER = 1  # Disable prefetching, it's causes problems and doesn't help performance
+    # CELERY_WORKER_CONCURRENCY = 50
 
     DEFAULT_FILE_STORAGE = 'poetster.storage_backends.MediaStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -189,6 +188,20 @@ class Dev(Base):
     )
 
     AWS_DEFAULT_ACL = 'public-read-write'
+
+
+class DockerDev(Dev):
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'db',
+            'PORT': 5432,
+        }
+    }
 
 
 class Prod(Base):
