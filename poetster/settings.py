@@ -11,6 +11,7 @@ from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 class Base(Configuration):
     """
     Base settings for django project, common between dev, production, and any other environment
@@ -155,7 +156,7 @@ class Dev(Base):
 
     # AWS SETTINGS
     AWS_LOCATION = 'static'
-    AWS_ACCESS_KEY_ID =  os.getenv('OL_AWS_ACCESS_KEY')
+    AWS_ACCESS_KEY_ID = os.getenv('OL_AWS_ACCESS_KEY')
     AWS_SECRET_ACCESS_KEY = os.getenv('OL_AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('P_BUCKET_NAME')
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
