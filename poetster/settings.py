@@ -195,11 +195,11 @@ class DockerDev(Dev):
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'postgres',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres',
-            'HOST': 'db',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME':  os.getenv('P_DB_NAME', 'cubdblta'),
+            'USER': os.getenv('P_DB_USER', 'cubdblta'),
+            'PASSWORD': os.getenv('P_DB_PASSWORD', ''),
+            'HOST': os.getenv('P_DB_HOST', ''),
             'PORT': 5432,
         }
     }

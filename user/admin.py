@@ -31,12 +31,12 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
 
+
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'bio', 'instagram']
 
     class Meta:
         model = models.Profile
-
 
 
 admin.site.register(models.User, UserAdmin)
