@@ -66,3 +66,4 @@ local_settings.py
 poem/migrations
 user/migrations
 .idea/
+secrets/
