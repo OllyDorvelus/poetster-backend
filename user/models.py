@@ -12,6 +12,7 @@ from django.dispatch import receiver
 
 from poetster.validators import validate_image_file_size
 
+
 def profile_image_file_path(instance, filename):
     """Generate the file path for uploading image to a poem"""
     ext = filename.split('.')[-1]
@@ -83,6 +84,7 @@ class ProfileManager(models.Manager):
             profile_to_follow.subscribers.add(profile_following)
         return is_followed
 
+
 class Profile(AbstractModel):
     """Extending user module for more information about the user
         Don't want to modify the given django user model too much"""
@@ -90,7 +92,8 @@ class Profile(AbstractModel):
     subscribers = models.ManyToManyField('self', related_name='subscribed', symmetrical=False, blank=True)
     bio = models.TextField(blank=True)
     instagram = models.URLField(blank=True)
-    image = models.ImageField(blank=True, validators=[validate_image_file_size], upload_to=profile_image_file_path)
+    image = models.ImageField(validators=[validate_image_file_size], upload_to=profile_image_file_path, blank=True,
+                              null=True)
     objects = ProfileManager()
 
     def __str__(self):

@@ -38,14 +38,15 @@ class PoemManager(models.Manager):
 class Poem(AbstractModel):
     """Poem that can be submitted by any auth user"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, related_name='poems')
+    genre = models.ForeignKey('Genre', on_delete=models.SET_NULL, related_name='poems', null=True)
     categories = models.ManyToManyField('Category', related_name='poems')
     up_votes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='voted_by', blank=True)
     title = models.CharField(max_length=75, blank=False)
     summary = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=False)
     is_published = models.BooleanField(default=True)
-    image = models.ImageField(null=True, blank=True,validators=[validate_image_file_size], upload_to=poem_image_file_path)
+    image = models.ImageField(validators=[validate_image_file_size], upload_to=poem_image_file_path, null=True,
+                              blank=True)
     objects = PoemManager()
 
     def __str__(self):
